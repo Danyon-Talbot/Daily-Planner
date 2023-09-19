@@ -19,17 +19,18 @@ $(function () {
   // function? How can DOM traversal be used to get the "hour-x" id of the
   // time-block containing the button that was clicked? How might the id be
   // useful when saving the description in local storage?
+
   //
   $(".saveBtn").on("click", function() {
     var hourID = $(this).parent().attr("id");
     var userInput = $(this).siblings("#user-input").val();
 
-    var saveCalandar = {
+    var saveCalendar = {
       currentHour: hourID,
       calInfo: userInput,
     }
 
-    localStorage.setItem(hourID, JSON.stringify(saveCalandar));
+    localStorage.setItem(hourID, JSON.stringify(saveCalendar));
 
     console.log(hourID);
     console.log(userInput);
