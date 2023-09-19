@@ -8,10 +8,6 @@ var saveBtn = document.getElementById("saveBtn");
 var body = document.body;
 
 
-document.addEventListener("DOMContentLoaded", function(){
-  //All code placed here waits until the document is loaded to run
-})
-
 $(function () {
   // TODO: Add a listener for click events on the save button. This code should
   // use the id in the containing time-block as a key to save the user input in
@@ -23,12 +19,11 @@ $(function () {
   //
   $(".saveBtn").on("click", function() {
     var hourID = $(this).parent().attr("id");
-    var userInput = $(this).siblings("#user-input").val();
+    var userInput = $(this).siblings(".user-input").val();
 
     var saveCalendar = {
-      currentHour: hourID,
-      calInfo: userInput,
-    }
+      calInfo: userInput
+    };
 
     localStorage.setItem(hourID, JSON.stringify(saveCalendar));
 
@@ -42,10 +37,24 @@ $(function () {
   // past, present, and future classes? How can Day.js be used to get the
   // current hour in 24-hour time?
   //
+  
+
   // TODO: Add code to get any user input that was saved in localStorage and set
   // the values of the corresponding textarea elements. HINT: How can the id
   // attribute of each time-block be used to do this?
-  //
+  
+  
+
+  $(".user-input").each(function() {
+    var key = $(this).parent().attr("id");
+    var storedInfo = localStorage.getItem(key);
+
+    if (storedInfo) {
+      var pulledData = JSON.parse(storedInfo);
+      var storedHourInfo = pulledData.calInfo;
+      $(this).val(storedHourInfo);
+    }
+  })
   
   // TODO: Add code to display the current date in the header of the page.
   var currentDay = today.format("dddd, MMMM DD");
