@@ -1,54 +1,58 @@
-// Wrap all code that interacts with the DOM in a call to jQuery to ensure that
-// the code isn't run until the browser has finished rendering all the elements
-// in the html.
-var today = dayjs();
-var currentHour = dayjs("H");
-var saveBtn = document.getElementById("saveBtn");
-//var userInput = document.getElementById("user-input").value;
-var body = document.body;
-
-
+//Wraps the the code in a call to JQuery to ensure that the HTML elements load before running
 $(function () {
-  // TODO: Add a listener for click events on the save button. This code should
-  // use the id in the containing time-block as a key to save the user input in
-  // local storage. HINT: What does `this` reference in the click listener
-  // function? How can DOM traversal be used to get the "hour-x" id of the
-  // time-block containing the button that was clicked? How might the id be
-  // useful when saving the description in local storage?
-
-  //
+  //Adds event listener on click to the saveBtn
   $(".saveBtn").on("click", function() {
+    //Grabs the parent ID of the saveBtn and assigns it the hourID var
     var hourID = $(this).parent().attr("id");
+    //Grabs the user input from the textanswer box and assigns it the userInput var
     var userInput = $(this).siblings(".user-input").val();
 
+    //Assigns the userInput variable to an object
     var saveCalendar = {
       calInfo: userInput
     };
 
+    //Saves the object using the hourID as it's title and saveCalendar as it's content
     localStorage.setItem(hourID, JSON.stringify(saveCalendar));
+    
+    //Displays confirmation message upon save
+    $("#saveConfirmText").text("Calendar Saved!");
 
-    console.log(hourID);
-    console.log(userInput);
+    //Removes confirmation message after 3 seconds
+    setTimeout(function() {
+      $("#saveConfirmText").text("");
+    }, 3000);
+
   })
 
-  // TODO: Add code to apply the past, present, or future class to each time
-  // block by comparing the id to the current hour. HINTS: How can the id
-  // attribute of each time-block be used to conditionally add or remove the
-  // past, present, and future classes? How can Day.js be used to get the
-  // current hour in 24-hour time?
-  //
-  
 
-  // TODO: Add code to get any user input that was saved in localStorage and set
-  // the values of the corresponding textarea elements. HINT: How can the id
-  // attribute of each time-block be used to do this?
-  
-  
+  //Grabs the "time-block" class and iterates over them
+  $(".time-block").each(function() {
+    //Grabs the current hour in 24hr format and parses it to ensure it is an integer
+    var currentHour = parseInt(dayjs().format("H"));
+    //calls to the "hour-x" id in the div element
+    var divID = $(this).attr("id");
 
+    //parses the string to return the integer
+    var splitDivID = parseInt(divID.split("-")[1]);
+
+      if (splitDivID === currentHour) {
+        $(this).attr("class", "row time-block present");
+      } else if (splitDivID < currentHour) {
+        $(this).attr("class", "row time-block past");
+      } else if (splitDivID > currentHour) {
+        $(this).attr("class", "row timeblock future");
+      } else {
+        console.log("ERROR");
+      }
+  })
+
+  //Grabs the user input textanwer box and iterates over them
   $(".user-input").each(function() {
     var key = $(this).parent().attr("id");
     var storedInfo = localStorage.getItem(key);
 
+    //Checks for stored info, parses it, then displays it in the textanwer box
     if (storedInfo) {
       var pulledData = JSON.parse(storedInfo);
       var storedHourInfo = pulledData.calInfo;
@@ -57,6 +61,7 @@ $(function () {
   })
   
   // TODO: Add code to display the current date in the header of the page.
+  var today = dayjs();
   var currentDay = today.format("dddd, MMMM DD");
   $("#currentDay").text(currentDay);
 });
